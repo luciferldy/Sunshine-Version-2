@@ -228,7 +228,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // http://developer.android.com/guide/components/intents-common.html#Maps
         if ( null != mForecastAdapter ) {
             Cursor c = mForecastAdapter.getCursor();
-            if ( null != c ) {
+            if ( null != c && c.getCount() > 0) {
                 c.moveToPosition(0);
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
@@ -242,6 +242,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 } else {
                     Log.d(LOG_TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
                 }
+            } else {
+                Log.d(LOG_TAG, "Couldn't open Map, cursor is null or count is 0.");
             }
 
         }
@@ -320,6 +322,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                         break;
                     case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
                         message = R.string.empty_forecast_list_server_error;
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                        message = R.string.empty_forecast_list_invalid_location;
                         break;
                     default:
                         if (!Utility.isNetWorkAvailable(getActivity())) {

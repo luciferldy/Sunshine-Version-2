@@ -52,13 +52,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
 
-    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_INVALID, LOCATION_STATUS_UNKNOWN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LocationStatus{}
 
     public static final int LOCATION_STATUS_OK = 0;
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
-    public static final int LOCATION_STATUS_SERVER_INVALID = 3;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_INVALID = 3;
     public static final int LOCATION_STATUS_UNKNOWN = 4;
 
 
@@ -129,6 +130,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
+            urlConnection.setConnectTimeout(3000);
+            urlConnection.setReadTimeout(3000);
             urlConnection.connect();
 
             // Read the input stream into a String
@@ -196,6 +199,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // These are the names of the JSON objects that need to be extracted.
 
+        // Message information
+        final String OWM_MESSAGE_CODE = "cod";
+
         // Location information
         final String OWM_CITY = "city";
         final String OWM_CITY_NAME = "name";
@@ -224,6 +230,23 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+            // do we have an error
+            if (forecastJson.has(OWM_MESSAGE_CODE)) {
+                int code = forecastJson.getInt(OWM_MESSAGE_CODE);
+                Log.i(LOG_TAG, "response code=" + code);
+                switch (code) {
+                    case HttpURLConnection.HTTP_OK:
+                        break;
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        Utility.setLocationStatus(getContext(), LOCATION_STATUS_INVALID);
+                        return;
+                    default:
+                        Utility.setLocationStatus(getContext(), LOCATION_STATUS_UNKNOWN);
+                        return;
+                }
+            }
+
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
             JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);

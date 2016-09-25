@@ -263,7 +263,7 @@ public class Utility {
     }
 
     /**
-     * Set the location status into shared preferences. This function should be called in the UI thread.
+     * Set the location status into shared preferences. This function should not be called in the UI thread.
      * Because it uses commit to write to the shared preferences
      * @param c context to get SharedPreferences
      * @param locationStatus location status
@@ -273,7 +273,6 @@ public class Utility {
         SharedPreferences.Editor spe = sp.edit();
         spe.putInt(c.getString(R.string.pref_location_status_key), locationStatus);
         spe.commit();
-        // spe.apply();
     }
 
     /**
@@ -285,5 +284,16 @@ public class Utility {
     public static @SunshineSyncAdapter.LocationStatus int getLocationStatus(Context c) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         return sp.getInt(c.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+    }
+
+    /**
+     * Reset the location status when we change the setting.
+     * @param c context to get the shared preferences.
+     */
+    public static void resetLocationStatus(Context c) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        spe.apply();
     }
 }
