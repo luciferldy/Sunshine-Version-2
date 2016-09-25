@@ -27,6 +27,9 @@
     <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_location_key" translatable="false">location</string>
 
+    <!-- Key name for storing location status in SharedPreferences -->
+    <string name="pref_location_status_key" translatable="false">loc-status</string>
+
     <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
     <string name="pref_location_default" translatable="false">94043</string>
 
@@ -97,5 +100,7 @@
     <!-- Empty Weather Database -->
     <string name="empty_forecast_list">No Weather Information Available</string>
     <string name="empty_forecast_list_no_network">No Weather information available. The network is not available to fetch weather data.</string>
+    <string name="empty_forecast_list_server_down">No Weather information available. The server is not returning data.</string>
+    <string name="empty_forecast_list_server_error">No Weather information available. The server is not returing valid data. Please check for an updated version.</string>
 
 </resources>

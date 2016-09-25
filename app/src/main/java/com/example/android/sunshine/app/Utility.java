@@ -17,8 +17,12 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -245,5 +249,41 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    /**
+     * return true if network is available or about to become to available.
+     * @param c Context used to get the ConnectivityManager.
+     * @return
+     */
+    public static boolean isNetWorkAvailable(Context c) {
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    /**
+     * Set the location status into shared preferences. This function should be called in the UI thread.
+     * Because it uses commit to write to the shared preferences
+     * @param c context to get SharedPreferences
+     * @param locationStatus location status
+     */
+    public static void setLocationStatus(Context c, @SunshineSyncAdapter.LocationStatus int locationStatus) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_location_status_key), locationStatus);
+        spe.commit();
+        // spe.apply();
+    }
+
+    /**
+     * Get the location status from shared preferences.
+     * @param c context to get SharedPreference
+     * @return int
+     */
+    @SuppressWarnings("ResouceType")
+    public static @SunshineSyncAdapter.LocationStatus int getLocationStatus(Context c) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        return sp.getInt(c.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
     }
 }

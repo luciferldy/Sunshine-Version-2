@@ -16,9 +16,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -36,13 +38,14 @@ import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
-import com.example.android.sunshine.app.utils.Utility;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
     public static final String LOG_TAG = ForecastFragment.class.getSimpleName();
+
     private ForecastAdapter mForecastAdapter;
 
     private ListView mListView;
@@ -95,6 +98,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
          */
         public void onItemSelected(Uri dateUri);
     }
+
+    // Listen the shared preferences change.
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(getString(R.string.pref_location_status_key))) {
+                updateEmptyView();
+            }
+        }
+    };
 
     public ForecastFragment() {
     }
@@ -177,6 +190,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
+        super.onPause();
     }
 
     @Override
@@ -286,9 +313,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             TextView tv = (TextView) getView().findViewById(R.id.listview_forecast_empty);
             if (null != tv) {
                 int message = R.string.empty_forecast_list;
-                if (!Utility.isNetWorkAvailable(getActivity())) {
-                    message = R.string.empty_forecast_list_no_network;
+                @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
+                switch (location) {
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                        message = R.string.empty_forecast_list_server_down;
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                        message = R.string.empty_forecast_list_server_error;
+                        break;
+                    default:
+                        if (!Utility.isNetWorkAvailable(getActivity())) {
+                            message = R.string.empty_forecast_list_no_network;
+                        }
                 }
+
                 tv.setText(message);
             }
         }
