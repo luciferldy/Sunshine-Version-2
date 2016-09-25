@@ -234,7 +234,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // do we have an error
             if (forecastJson.has(OWM_MESSAGE_CODE)) {
                 int code = forecastJson.getInt(OWM_MESSAGE_CODE);
-                Log.i(LOG_TAG, "response code=" + code);
+                Log.i(LOG_TAG, "response code = " + code);
                 switch (code) {
                     case HttpURLConnection.HTTP_OK:
                         break;
