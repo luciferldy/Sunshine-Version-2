@@ -14,6 +14,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp"
         android:orientation="vertical">
 
         <TextView
@@ -38,14 +39,17 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="36sp"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
 
+    <!-- 有些地方同时使用 layout_marginRight 和 layout_marginEnd 是兼容 4.2 API Level 17 以下的版本 -->
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="5"
         android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         android:gravity="center_horizontal|bottom">
 
