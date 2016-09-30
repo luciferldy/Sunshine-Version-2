@@ -125,4 +125,6 @@
     <string name="empty_forecast_list_server_error">No Weather information available. The server is not returning valid data. Please check for an updated version.</string>
     <string name="empty_forecast_list_invalid_location">No Weather information available. The location in the settings is not recognized by the weather server.</string>
 
+    // TODO: Get the SenderID from the Developer Console
+    <string name="gcm_defaultSenderId" translatable="false"></string>
 </resources>
