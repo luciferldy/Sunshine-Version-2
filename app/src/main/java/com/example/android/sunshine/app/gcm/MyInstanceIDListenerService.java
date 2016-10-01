@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app.gcm;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
 
@@ -20,6 +21,7 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
     @Override
     public void onTokenRefresh() {
         // Fetch updated Instance ID token.
+        Log.i(LOG_TAG, "Refreshed Token");
         Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
     }
