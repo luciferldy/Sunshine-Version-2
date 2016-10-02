@@ -11,5 +11,10 @@
     <color name="colorPrimaryLight">#B3E5FC</color> <!-- 100 -->
     <color name="colorPrimaryDark">#0288D1</color> <!-- 700 -->
     <color name="colorAccent">#FFD704</color>
-    
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+
+    <!-- Detail Accent Colors -->
+    <color name="detail_accent_pane_background">#455A64</color>
+    <color name="detail_accent_label">#90A4AE</color>
 </resources>
