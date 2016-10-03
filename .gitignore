@@ -44,3 +44,4 @@ build/
 
 # Private file
 app/google-services.json
+captures/

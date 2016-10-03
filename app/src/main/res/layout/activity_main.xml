@@ -1,32 +1,8 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_forecast"
+    android:name="com.example.android.sunshine.app.ForecastFragment"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="?attr/listPreferredItemHeight"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_logo"
-            android:contentDescription="Logo"
-            android:scaleType="center"
-            android:background="@color/colorPrimary"/>
-
-    </android.support.v7.widget.Toolbar>
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/fragment_forecast"
-        android:name="com.example.android.sunshine.app.ForecastFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.example.android.sunshine.app.ForecastFragment"
-        tools:layout="@android:layout/list_content" />
-
-</FrameLayout>
+    android:layout_height="match_parent"
+    tools:context="com.example.android.sunshine.app.ForecastFragment"
+    tools:layout="@android:layout/list_content" />
