@@ -146,10 +146,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // The ForecastAdapter will take data from a source and
-        // use it to populate the RecyclerView it's attached to.
-        mForecastAdapter = new ForecastAdapter(getActivity());
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the RecyclerView, and attach this adapter to it.
@@ -157,25 +153,24 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         // set the layout manager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        View emptyView = rootView.findViewById(R.id.recyclerview_forecast_empty);
+
+        // use the setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecycleView
+        mRecyclerView.setHasFixedSize(true);
+
+        // The ForecastAdapter will take data from a source and use
+        // it to populate the RecycleView it's attached to.
+        mForecastAdapter = new ForecastAdapter(getActivity(), new ForecastAdapter.ForecastAdapterOnClickHandler() {
+            @Override
+            public void onClick(Long data, ForecastAdapter.ForecastAdapterViewHolder vh) {
+                String locationSetting = Utility.getPreferredLocation(getActivity());
+                ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, data));
+                mPosition = vh.getAdapterPosition();
+            }
+        }, emptyView);
+
         mRecyclerView.setAdapter(mForecastAdapter);
-        // We'll call our MainActivity
-//        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                // CursorAdapter returns a cursor at the correct position for getItem(), or null
-//                // if it cannot seek to that position.
-//                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                if (cursor != null) {
-//                    String locationSetting = com.example.android.sunshine.app.Utility.getPreferredLocation(getActivity());
-//                    ((Callback) getActivity())
-//                            .onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-//                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-//                            ));
-//                }
-//                mPosition = position;
-//            }
-//        });
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways
@@ -214,7 +209,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     // since we read the location when we create the loader, all we need to do is restart things
-    void onLocationChanged( ) {
+    void onLocationChanged() {
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
@@ -286,6 +281,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i(LOG_TAG, "onLoadFinish data size = " + (data != null ? data.getCount() : "0"));
         mForecastAdapter.swapCursor(data);
         if (mPosition != RecyclerView.NO_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
