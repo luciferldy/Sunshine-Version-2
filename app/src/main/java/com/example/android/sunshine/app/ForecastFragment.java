@@ -15,8 +15,10 @@
  */
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -26,9 +28,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +38,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
@@ -53,6 +56,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private RecyclerView mRecyclerView;
     private int mPosition = RecyclerView.NO_POSITION;
     private boolean mUseTodayLayout;
+    private boolean mHoldForTransition;
 
     private static final String SELECTED_KEY = "selected_position";
 
@@ -98,7 +102,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(Uri dateUri);
+        public void onItemSelected(Uri dateUri, ForecastAdapter.ForecastAdapterViewHolder vh);
     }
 
     // Listen the shared preferences change.
@@ -123,7 +127,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.forecastfragment, menu);
+        inflater.inflate(R.menu.fragment_forecast, menu);
     }
 
     @Override
@@ -167,7 +171,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             public void onClick(Long data, ForecastAdapter.ForecastAdapterViewHolder vh) {
                 String locationSetting = Utility.getPreferredLocation(getActivity());
-                ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, data));
+                ((Callback) getActivity()).onItemSelected(
+                        WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, data), vh);
                 mPosition = vh.getAdapterPosition();
             }
         }, emptyView);
@@ -213,6 +218,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(context, attrs, savedInstanceState);
+        TypedArray a = getActivity().obtainStyledAttributes(attrs, R.styleable.ForecastFragment,
+                0, 0);
+        mHoldForTransition = a.getBoolean(R.styleable.ForecastFragment_sharedElementTransitions, false);
+        a.recycle();
+    }
+
+    @Override
     public void onResume() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sp.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
@@ -236,6 +250,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        // We hold for transition here just in-case the activity
+        // needs to be re-created. In a standard return transition,
+        // this doesn't actually make a difference.
+        if (mHoldForTransition) {
+            getActivity().supportPostponeEnterTransition();
+        }
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -321,6 +341,29 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             mRecyclerView.smoothScrollToPosition(mPosition);
         }
         updateEmptyView();
+        if (data == null) {
+            return;
+        }
+        // solve case when data is null.
+        if (data.getCount() == 0) {
+            getActivity().supportStartPostponedEnterTransition();
+        } else {
+            mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    // Since we know we're going to get items, we keep the listener around until
+                    // we see Children.
+                    if (mRecyclerView.getChildCount() > 0) {
+                        mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        if (mHoldForTransition) {
+                            getActivity().supportStartPostponedEnterTransition();
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     @Override

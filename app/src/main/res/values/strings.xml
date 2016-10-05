@@ -202,4 +202,6 @@
     <!--
     <string name="gcm_defaultSenderId" translatable="false">682104045433</string>
     -->
+    
+    <string name="detail_icon_transition_name" translatable="false">TN_DetailIcon</string>
 </resources>

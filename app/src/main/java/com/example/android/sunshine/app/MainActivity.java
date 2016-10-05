@@ -22,11 +22,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.android.sunshine.app.gcm.RegistrationIntentService;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -55,6 +57,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         getSupportActionBar().setDisplayShowTitleEnabled(false); // 不显示 Title
 
         if (findViewById(R.id.weather_detail_container) != null) {
+            Log.i(LOG_TAG, "two pane mode.");
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
@@ -139,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
     }
 
     @Override
-    public void onItemSelected(Uri contentUri) {
+    public void onItemSelected(Uri contentUri, ForecastAdapter.ForecastAdapterViewHolder vh) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -157,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             Intent intent = new Intent(this, DetailActivity.class)
                     .setData(contentUri);
             ActivityOptionsCompat activityOptions = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(this);
+                    .makeSceneTransitionAnimation(this, new Pair<View, String>(vh.mIconView, getString(R.string.detail_icon_transition_name)));
             ActivityCompat.startActivity(this, intent, activityOptions.toBundle());
         }
     }

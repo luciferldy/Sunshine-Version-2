@@ -49,9 +49,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final String DETAIL_URI = "URI";
 
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+    public static final String DETAIL_TRANSITION_ANIMATION = "DTA";
 
     private String mForecast;
     private Uri mUri;
+    private boolean mTransitionAnimation;
 
     private static final int DETAIL_LOADER = 0;
 
@@ -107,6 +109,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Bundle arguments = getArguments();
         if (arguments != null) {
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+            mTransitionAnimation = arguments.getBoolean(DETAIL_TRANSITION_ANIMATION, false);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
@@ -135,7 +138,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Inflate the menu; this adds items to the action bar if it is present.
         if ( getActivity() instanceof DetailActivity ){
             // Inflate the menu; this adds items to the action bar if it is present.
-            inflater.inflate(R.menu.detailfragment, menu);
+            inflater.inflate(R.menu.fragment_detail, menu);
             finishCreatingMenu(menu);
         }
     }
@@ -263,20 +266,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.toolbar);
 
         // We need to start the enter transition after the data has loaded
-        if (activity instanceof DetailActivity) {
+        if (mTransitionAnimation) {
             activity.supportStartPostponedEnterTransition();
 
-            if ( null != toolbarView ) {
+            if (null != toolbarView) {
                 activity.setSupportActionBar(toolbarView);
 
                 activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
                 activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         } else {
-            if ( null != toolbarView ) {
+            if (null != toolbarView) {
                 Menu menu = toolbarView.getMenu();
                 if ( null != menu ) menu.clear();
-                toolbarView.inflateMenu(R.menu.detailfragment);
+                toolbarView.inflateMenu(R.menu.fragment_detail);
                 finishCreatingMenu(toolbarView.getMenu());
             }
         }
