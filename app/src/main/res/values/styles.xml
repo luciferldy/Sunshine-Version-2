@@ -17,6 +17,9 @@
         <item name="android:background">?attr/colorPrimary</item>
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
     </style>
+    
+    <style name="AppTheme.Main" parent="@style/AppTheme" />
+    <style name="AppTheme.Detail" parent="@style/AppTheme" />
 
     <!-- Style for forecast listview -->
     <style name="ForecastListStyle">

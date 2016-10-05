@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
+    android:transitionOrdering="together"
+    android:duration="@integer/window_transition_duration">
+    <fade>
+        <targets>
+            <target android:targetId="@android:id/statusBarBackground" />
+            <target android:targetId="@android:id/navigationBarBackground" />
+        </targets>
+    </fade>
+    <slide android:slideEdge="top">
+        <targets>
+            <target android:targetId="@id/parallax_bar"/>
+        </targets>
+    </slide>
+    <slide android:slideEdge="right">
+        <targets>
+            <target android:targetId="@id/detail_additional_pane"/>
+        </targets>
+    </slide>
+
+</transitionSet>
