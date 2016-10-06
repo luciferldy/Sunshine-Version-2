@@ -24,8 +24,8 @@
             android:layout_height="?attr/listPreferredItemHeight"/>
     </LinearLayout>
     <include layout="@layout/fragment_main_base"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_height="match_parent"
-        android:layout_width="@dimen/landscape_forecast_view_width"/>
+        android:layout_width="@dimen/landscape_forecast_view_width"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
