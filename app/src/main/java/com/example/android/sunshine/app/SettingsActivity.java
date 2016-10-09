@@ -29,7 +29,6 @@ import android.text.TextUtils;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
-
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -174,7 +173,7 @@ public class SettingsActivity extends PreferenceActivity
                 // If the provided place doesn't have an address, we'll from a display-friendly
                 // string from the latlon values.
                 if (TextUtils.isEmpty(address)) {
-                    address = String.format("(%.2f, %.2f)", latLong.latitude, latLong.longtitude);
+                    address = String.format("(%.2f, %.2f)", latLong.latitude, latLong.longitude);
                 }
 
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
