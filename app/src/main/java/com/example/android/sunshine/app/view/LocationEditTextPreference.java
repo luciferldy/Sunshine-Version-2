@@ -22,6 +22,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 /**
  * Created by Lucifer on 2016/9/25.
@@ -51,6 +52,8 @@ public class LocationEditTextPreference extends EditTextPreference {
         if (resultCode == ConnectionResult.SUCCESS) {
             // Add the get current location widget to our location preference.
             setWidgetLayoutResource(R.layout.pref_current_location);
+        } else {
+            Log.d(LOG_TAG, "construction result code " + resultCode);
         }
     }
 
@@ -58,6 +61,8 @@ public class LocationEditTextPreference extends EditTextPreference {
     protected View onCreateView(ViewGroup parent) {
         View view = super.onCreateView(parent);
         View currentLocation = view.findViewById(R.id.current_location);
+        if (currentLocation == null)
+            return view;
         currentLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,11 +79,11 @@ public class LocationEditTextPreference extends EditTextPreference {
                 // intent comes to the right place for us to process it.
                 Activity settingsActivity = (SettingsActivity) context;
                 try {
-                    settingsActivity.startActivityForResult(
-                            builder.build(context), SettingsActivity.PLACE_PICKER_REQUEST);
+                    settingsActivity.startActivityForResult(builder.build(settingsActivity), SettingsActivity.PLACE_PICKER_REQUEST);
 
                 } catch (GooglePlayServicesNotAvailableException
                         | GooglePlayServicesRepairableException e) {
+                    Log.e(LOG_TAG, "onCreateView", e);
                     // What did you do?? This is why we check Google Play services in onResume!!!
                     // The difference in these exception types is the difference between pausing
                     // for a moment to prompt the user to update/install/enable Play services vs
