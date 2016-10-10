@@ -23,8 +23,7 @@
             android:layout_width="@dimen/list_icon"
             android:layout_height="@dimen/list_icon"
             android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material"
-            android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
-            />
+            android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material" />
 
         <LinearLayout
             android:layout_height="wrap_content"

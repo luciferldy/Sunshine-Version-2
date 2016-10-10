@@ -70,6 +70,27 @@
             android:exported="false"
             android:syncable="true" />
 
+        <!-- The google cloud messaging receiver and services -->
+        <receiver android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.example.android.sunshine.app" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Widget TODAY -->
+        <receiver android:name=".widget.TodayWidgetProvider"
+            android:label="@string/title_widget_today">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_today" />
+        </receiver>
+
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.SunshineAuthenticatorService">
             <intent-filter>
@@ -92,17 +113,6 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-
-        <!-- The google cloud messaging receiver and services -->
-        <receiver android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="com.example.android.sunshine.app" />
-            </intent-filter>
-        </receiver>
         <service android:name=".MyGcmListenerService"
             android:exported="false">
             <intent-filter>
