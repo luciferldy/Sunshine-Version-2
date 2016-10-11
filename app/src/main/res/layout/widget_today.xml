@@ -25,6 +25,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:gravity="center_vertical"
             android:layout_toRightOf="@id/widget_icon"
             android:orientation="vertical">
 

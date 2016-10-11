@@ -130,6 +130,7 @@
 
     <!-- strings related to widgets -->
     <string name="title_widget_today">Sunshine Today</string>
+    <string name="title_widget_detail">Sunshine Detail</string>
 
     <!-- Empty Weather Database -->
     <string name="empty_forecast_list">No Weather Information Available</string>
