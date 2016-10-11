@@ -34,6 +34,7 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.google.android.apps.muzei:muzei-api:2.+'
 
     compile 'com.google.android.gms:play-services-gcm:9.6.1'
     compile 'com.google.android.gms:play-services-location:9.6.1'
